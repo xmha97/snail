@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
             putExtra(
                 CalendarContract.Events.TITLE,
-                "Tomato Timer"
+                "Focus"
             )
         }
 
