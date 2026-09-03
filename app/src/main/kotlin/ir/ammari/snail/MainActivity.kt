@@ -22,17 +22,22 @@ import androidx.compose.ui.Modifier
 import ir.ammari.snail.ui.theme.SnailTheme
 import kotlinx.coroutines.delay
 
+
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
 
         setContent {
             SnailTheme {
                 TimerScreen(
                     onAddToCalendar = { startTime, endTime ->
-                        addCalendarEvent(startTime, endTime)
+                        addCalendarEvent(
+                            startTime = startTime,
+                            endTime = endTime
+                        )
                     }
                 )
             }
@@ -44,8 +49,8 @@ class MainActivity : ComponentActivity() {
         endTime: Long
     ) {
         val (roundedStart, roundedEnd) = roundToFiveMinutes(
-            startTime,
-            endTime
+            startTime = startTime,
+            endTime = endTime
         )
 
         val intent = Intent(Intent.ACTION_INSERT).apply {
@@ -71,6 +76,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 /**
  * Rounds the start time down and the end time up
  * to 5-minute intervals.
@@ -78,6 +84,8 @@ class MainActivity : ComponentActivity() {
  * Example:
  * 17:41 -> 17:40
  * 18:19 -> 18:20
+ *
+ * The resulting event will always be at least 5 minutes long.
  */
 private fun roundToFiveMinutes(
     startTime: Long,
@@ -102,13 +110,14 @@ private fun roundToFiveMinutes(
     return roundedStart to roundedEnd
 }
 
+
 @Composable
 fun TimerScreen(
     onAddToCalendar: (Long, Long) -> Unit
 ) {
     /*
      * rememberSaveable survives configuration changes,
-     * such as screen rotation.
+     * including screen rotation.
      */
     var isRunning by rememberSaveable {
         mutableStateOf(false)
@@ -123,15 +132,25 @@ fun TimerScreen(
     }
 
     /*
-     * Recalculate elapsed time from the actual clock.
+     * Calculate elapsed time from the actual clock.
      *
-     * When the screen rotates, this LaunchedEffect is
-     * recreated, but startTime and isRunning are restored.
-     * Therefore the timer continues automatically.
+     * We don't increment elapsedSeconds by one every second.
+     * Instead, we calculate:
+     *
+     * current time - start time
+     *
+     * This prevents timer drift.
+     *
+     * When the screen rotates, this effect is recreated,
+     * but isRunning and startTime are restored by
+     * rememberSaveable, so the timer continues running.
      */
     LaunchedEffect(isRunning, startTime) {
+
         while (isRunning) {
-            val currentTime = System.currentTimeMillis()
+
+            val currentTime =
+                System.currentTimeMillis()
 
             elapsedSeconds =
                 (currentTime - startTime) / 1000L
@@ -144,16 +163,25 @@ fun TimerScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
+
         Button(
             onClick = {
+
                 if (!isRunning) {
+
                     // Start timer
-                    startTime = System.currentTimeMillis()
+                    startTime =
+                        System.currentTimeMillis()
+
                     elapsedSeconds = 0L
+
                     isRunning = true
+
                 } else {
+
                     // Stop timer
-                    val endTime = System.currentTimeMillis()
+                    val endTime =
+                        System.currentTimeMillis()
 
                     // Calculate final elapsed time
                     elapsedSeconds =
@@ -161,7 +189,7 @@ fun TimerScreen(
 
                     isRunning = false
 
-                    // Add event to calendar
+                    // Add timer session to calendar
                     onAddToCalendar(
                         startTime,
                         endTime
@@ -173,6 +201,7 @@ fun TimerScreen(
                 }
             }
         ) {
+
             Text(
                 text = if (isRunning) {
                     formatTime(elapsedSeconds)
@@ -184,20 +213,30 @@ fun TimerScreen(
     }
 }
 
+
 private fun formatTime(
     seconds: Long
 ): String {
-    val hours = seconds / 3600
-    val minutes = (seconds % 3600) / 60
-    val remainingSeconds = seconds % 60
+
+    val hours =
+        seconds / 3600
+
+    val minutes =
+        (seconds % 3600) / 60
+
+    val remainingSeconds =
+        seconds % 60
 
     return if (hours > 0) {
+
         "%02d:%02d:%02d".format(
             hours,
             minutes,
             remainingSeconds
         )
+
     } else {
+
         "%02d:%02d".format(
             minutes,
             remainingSeconds
