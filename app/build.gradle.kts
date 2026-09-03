@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    namespace = "ir.ammari.tomato"
+    namespace = "ir.ammari.snail"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "ir.ammari.tomato"
+        applicationId = "ir.ammari.snail"
         minSdk = 24
         targetSdk = 37
         versionCode = 1

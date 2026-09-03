@@ -1,4 +1,4 @@
-package ir.ammari.tomato
+package ir.ammari.snail
 
 import android.content.Intent
 import android.os.Bundle
@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import ir.ammari.tomato.ui.theme.TomatoTheme
+import ir.ammari.snail.ui.theme.SnailTheme
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
@@ -29,7 +29,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            TomatoTheme {
+            SnailTheme {
                 TimerScreen(
                     onAddToCalendar = { startTime, endTime ->
                         addCalendarEvent(startTime, endTime)

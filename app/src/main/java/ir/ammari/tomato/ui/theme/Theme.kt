@@ -1,4 +1,4 @@
-package ir.ammari.tomato.ui.theme
+package ir.ammari.snail.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -34,7 +34,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun TomatoTheme(
+fun SnailTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,

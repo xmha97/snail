@@ -1,4 +1,4 @@
-package ir.ammari.tomato.ui.theme
+package ir.ammari.snail.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

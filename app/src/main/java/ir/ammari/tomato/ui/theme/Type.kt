@@ -1,4 +1,4 @@
-package ir.ammari.tomato.ui.theme
+package ir.ammari.snail.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

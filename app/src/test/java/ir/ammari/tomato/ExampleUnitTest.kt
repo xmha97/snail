@@ -1,4 +1,4 @@
-package ir.ammari.tomato
+package ir.ammari.snail
 
 import org.junit.Test
 
