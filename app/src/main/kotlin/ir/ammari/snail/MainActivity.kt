@@ -15,7 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,8 +78,6 @@ class MainActivity : ComponentActivity() {
  * Example:
  * 17:41 -> 17:40
  * 18:19 -> 18:20
- *
- * The resulting event will always be at least 5 minutes long.
  */
 private fun roundToFiveMinutes(
     startTime: Long,
@@ -108,25 +106,30 @@ private fun roundToFiveMinutes(
 fun TimerScreen(
     onAddToCalendar: (Long, Long) -> Unit
 ) {
-    var isRunning by remember {
+    /*
+     * rememberSaveable survives configuration changes,
+     * such as screen rotation.
+     */
+    var isRunning by rememberSaveable {
         mutableStateOf(false)
     }
 
-    var elapsedSeconds by remember {
+    var elapsedSeconds by rememberSaveable {
         mutableLongStateOf(0L)
     }
 
-    var startTime by remember {
+    var startTime by rememberSaveable {
         mutableLongStateOf(0L)
     }
 
     /*
-     * Calculate elapsed time from the actual clock
-     * instead of incrementing the counter.
+     * Recalculate elapsed time from the actual clock.
      *
-     * This prevents timer drift caused by delay().
+     * When the screen rotates, this LaunchedEffect is
+     * recreated, but startTime and isRunning are restored.
+     * Therefore the timer continues automatically.
      */
-    LaunchedEffect(isRunning) {
+    LaunchedEffect(isRunning, startTime) {
         while (isRunning) {
             val currentTime = System.currentTimeMillis()
 
@@ -152,13 +155,13 @@ fun TimerScreen(
                     // Stop timer
                     val endTime = System.currentTimeMillis()
 
-                    // Calculate the final elapsed time
+                    // Calculate final elapsed time
                     elapsedSeconds =
                         (endTime - startTime) / 1000L
 
                     isRunning = false
 
-                    // Open calendar with rounded times
+                    // Add event to calendar
                     onAddToCalendar(
                         startTime,
                         endTime
